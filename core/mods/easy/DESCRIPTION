@@ -1,0 +1,8 @@
+Date: 17/04/2012
+Easy Captcha - Module to bypass EasyCaptcha
+Example: 'core/mods/easy/'
+License: GPLv3
+Author: psy
+-----------
+Invocation '--mod easy'
+==============
