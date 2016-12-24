@@ -47,6 +47,7 @@ class CIntruderCrack(object):
         """
         self.captcha = self.set_captcha(captcha)
         start = time.time()
+        self.dictionary_path = 'mods/easy/dictionary/'
         if not os.path.exists("core/images/previews/"):
             os.mkdir("core/images/previews/")
         else:
@@ -70,15 +71,15 @@ class CIntruderCrack(object):
  
     def crack(self, options):
         v = VectorCompare()
-        path, dirs, files = os.walk("dictionary/").next()
+        path, dirs, files = os.walk(self.dictionary_path).next()
         dictionary = dirs
         imageset = []
         last_letter = None
         print "\n[Info] Loading dictionary...\n"
         for letter in dictionary:
-            for img in os.listdir('dictionary/'+letter):
+            for img in os.listdir(self.dictionary_path+letter):
                 temp = []
-                temp.append(self.buildvector(Image.open("dictionary/%s/%s"%(letter, img))))
+                temp.append(self.buildvector(Image.open(self.dictionary_path+"%s/%s"%(letter, img))))
                 imageset.append({letter:temp})
         try:
             im = Image.open(self.captcha)
@@ -93,7 +94,7 @@ class CIntruderCrack(object):
             for y in range(im.size[0]):
                 pix = im.getpixel((y, x))
                 temp[pix] = pix
-                if pix == 3: # pixel colour id 
+                if pix == 3: 
                     im2.putpixel((y, x), 0)
         inletter = False
         foundletter = False

@@ -25,14 +25,14 @@ import shutil
 
 class CIntruderOCR(object):
     """
-    Class to apply OCR techniques into captchas (general algorithm)
+    Class to apply OCR techniques to EasyCaptcha (http://kestas.kuliukas.com/EasyCaptcha/EasyCaptcha/easycaptcha.php)
     """
     def __init__(self, captcha, options):
         # generate words structure (+ previews for gui)
         if not os.path.exists("outputs/words/"):
             os.mkdir("outputs/words/")
         else:
-            shutil.rmtree("outputs/words/") 
+            shutil.rmtree("outputs/words/")
             os.mkdir("outputs/words/")
         if not os.path.exists("core/images/previews/"):
             os.mkdir("core/images/previews/")
@@ -44,6 +44,7 @@ class CIntruderOCR(object):
         else:
             shutil.rmtree("core/images/previews/ocr/")
             os.mkdir("core/images/previews/ocr/")
+
         # initialize main CIntruder
         try:
             im = Image.open(captcha)
@@ -51,7 +52,7 @@ class CIntruderOCR(object):
             im2 = Image.new("P", im.size, 255)
             im = im.convert("P")
         except:
-            print "Error during OCR process... Is that captcha supported?\n"
+            print "Error during OCR process!. Is that captcha supported?\n"
             return
         colourid = []
         try: # extract colour histogram
@@ -63,19 +64,14 @@ class CIntruderOCR(object):
         for i in range(256):
             values[i] = hist[i]
         if options.verbose:
-            print "\n[Info] Extracting advanced OCR info..."
-            print "\n=============================" 
+            print "[Info] Extracting advanced OCR info..."
+            print "\n============================="
             print "Image Histogram (order by >):"
             print "============================="
-        count = 0
         for j, k in sorted(values.items(), key=itemgetter(1), reverse=True)[:10]:
             colourid.append(j)  
             if options.verbose:
-                count = count + 1
-                if count == 1: # first is background
-                    print "Colour ID: [", j, "] -> Total pixels:", k, "[Background]"
-                else:
-                    print "Colour ID: [", j, "] -> Total pixels:", k
+                print "Colour ID: [", j, "] -> Total pixels:", k
         if options.verbose:
             print ""
         temp = {}
@@ -121,19 +117,19 @@ class CIntruderOCR(object):
         print "================="
         print "Training Results:"
         print "================="
-        print "[Info] Number of 'symbols' found: [", count, "]"
+        print "\nNumber of 'symbols' found: [", count, "]"
         if count == 0:
             print "\nOuch!. Looks like this captcha is resisting to our OCR methods... by the moment ;-)\n"
             print "Try this...\n" 
             print "    1) Check colour's ID values and quantity of pixels of each by using verbose" 
-            print "    2) Set different ID values to your OCR configuration and try it again"
+            print "    2) Set different ID values to your OCR configration and try it again"
             print "    3) Try to apply some image filters (ex: B/W) manually with an editor (ex: GIMP) to your target"
-            print "    4) Maybe there is a module that works correctly for this captcha...\n"
+            print "    4) Maybe this module that you are using is not working for this captcha...\n"
             print "------------\n"
         else:
             path, dirs, files = os.walk("outputs/words/").next()
             file_count = str(len(files))
-            print "[Info] Generated [ "+ file_count+ " ] OCR images here:", "outputs/words/\n"
+            print "\n[Info] Generated [ "+ file_count+ " ] OCR images here:", "outputs/words/\n"
             if options.verbose:
                 # checking for platform to list new words added to dictionary
                 os_sys = platform.system()

@@ -1,12 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-"
-# vim: set expandtab tabstop=4 shiftwidth=4:
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
 """
-$Id$
+This file is part of the cintruder project, http://cintruder.03c8.net
 
-This file is part of the cintruder project, http://cintruder.sourceforge.net.
-
-Copyright (c) 2011/2012 psy <root@lordepsylon.net> - <epsylon@riseup.net>
+Copyright (c) 2012/2016 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
