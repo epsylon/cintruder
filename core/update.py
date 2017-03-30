@@ -35,9 +35,8 @@ class Updater(object):
             print "\nTo have working this feature, you should clone CIntruder with:\n"
             print "$ git clone %s" % GIT_REPOSITORY +"\n"
         else:
-            checkout = execute("git checkout .", shell=True, stdout=PIPE, stderr=PIPE).communicate()[0]
-            if "fast-forwarded" in checkout:
-                pull = execute("git pull %s HEAD" % GIT_REPOSITORY, shell=True, stdout=PIPE, stderr=PIPE).communicate()
-                print "Congratulations!! CIntruder has been updated to latest version ;-)\n"
+            checkout = execute("git pull", shell=True, stdout=PIPE, stderr=PIPE).communicate()[0]
+            if "Fast-forward" in checkout:
+                print "Congratulations!! CIntruder has been updated... ;-)\n"
             else:
-                print "You are updated! ;-)\n"
+                print "Your CIntruder doesn't need to be updated... ;-)\n"
