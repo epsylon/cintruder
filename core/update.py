@@ -32,7 +32,7 @@ class Updater(object):
         if not os.path.exists(os.path.join(rootDir, ".git")):
             print "Not any .git repository found!\n"
             print "="*30
-            print "\nTo have working this feature, you should clone UFONet with:\n"
+            print "\nTo have working this feature, you should clone CIntruder with:\n"
             print "$ git clone %s" % GIT_REPOSITORY
         else:
             checkout = execute("git checkout . && git pull", shell=True, stdout=PIPE, stderr=PIPE).communicate()[0]
