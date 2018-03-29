@@ -3,7 +3,7 @@
 """
 This file is part of the cintruder project, http://cintruder.03c8.net
 
-Copyright (c) 2012/2016 psy <epsylon@riseup.net>
+Copyright (c) 2012/2016/2018 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -32,11 +32,12 @@ class Updater(object):
         if not os.path.exists(os.path.join(rootDir, ".git")):
             print "Not any .git repository found!\n"
             print "="*30
-            print "\nTo have working this feature, you should clone CIntruder with:\n"
-            print "$ git clone %s" % GIT_REPOSITORY +"\n"
+            print "\nTo have working this feature, you should clone UFONet with:\n"
+            print "$ git clone %s" % GIT_REPOSITORY
         else:
-            checkout = execute("git pull", shell=True, stdout=PIPE, stderr=PIPE).communicate()[0]
-            if "Fast-forward" in checkout:
+            checkout = execute("git checkout . && git pull", shell=True, stdout=PIPE, stderr=PIPE).communicate()[0]
+            print checkout
+            if not "Already up-to-date" in checkout:
                 print "Congratulations!! CIntruder has been updated... ;-)\n"
             else:
                 print "Your CIntruder doesn't need to be updated... ;-)\n"
