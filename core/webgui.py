@@ -3,7 +3,7 @@
 """
 This file is part of the cintruder project, http://cintruder.03c8.net
 
-Copyright (c) 2012/2016 psy <epsylon@riseup.net>
+Copyright (c) 2012/2019 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -109,7 +109,6 @@ Crack: <input type="radio" onclick="javascript:OptionsCheck();" name="options" i
 </center>
 </td>
    <td><center>
-
 <div id="ifTrack" style="display:none">
 <table border="1" cellpadding="10" cellspacing="5">
 <tr>
@@ -120,13 +119,13 @@ Crack: <input type="radio" onclick="javascript:OptionsCheck();" name="options" i
  <td><center><input type="submit" value="Download!" onclick="TrackCaptchas()"></center></td>
 </tr></table>
 </div>
-
 <div id="ifTrain" style="display:none">
 <table border="1" cellpadding="5" cellspacing="5">
 <tr>
  <td><center>
 LOCAL: <input type="radio" onclick="javascript:TrainSourcesCheck();" name="training_sources" id="training_local"/ CHECKED>
 URL: <input type="radio" onclick="javascript:TrainSourcesCheck();" name="training_sources" id="training_url"/>
+ <br><br><a href='javascript:runCommandX("cmd_tracklist");javascript:showResults()'>List Last Tracked</a><br><br>
 </center></td>
 <td>
 <div id="ifLocal" style="display:none">
@@ -181,13 +180,13 @@ URL: <input type="radio" onclick="javascript:TrainSourcesCheck();" name="trainin
 </tr>
 </table>
 </div>
-
 <div id="ifCrack" style="display:none">
 <table border="1" cellpadding="5" cellspacing="5">
 <tr>
  <td><center>
 LOCAL: <input type="radio" onclick="javascript:CrackingCheck();" name="cracking_sources" id="cracking_local"/ CHECKED>
 URL: <input type="radio" onclick="javascript:CrackingCheck();" name="cracking_sources" id="cracking_url"/>
+ <br><br><a href='javascript:runCommandX("cmd_tracklist");javascript:showResults()'>List Last Tracked</a><br><br>
 </center></td>
 <td>
 <div id="ifCrackLocal" style="display:none">
@@ -228,6 +227,17 @@ URL: <input type="radio" onclick="javascript:CrackingCheck();" name="cracking_so
  </td>
 </tr></table>
  </td>
+</tr>
+<tr>
+<td align="right">Advanced OCR: <input type="checkbox" onclick="javascript:SetColourID();" name="set_colour_id3" id="set_colour_id3"></td>
+ <td align="center">
+<div id="ifMod_colour2" style="display:none">
+<table cellpadding="5" cellspacing="5">
+<tr>
+ <td>Set Colour ID: <input type="text" name="set_id3" id="set_id3" size="2" placeholder="Ex: 1"></td>
+</tr></table>
+</div>
+</td>
 </tr>
 <tr>
 <td align="right">Export to XML: <input type="checkbox" onclick="javascript:SetXML();" name="set_xml" id="set_xml"></td>
@@ -358,7 +368,7 @@ function runCommandX(cmd,params) {
                                 if(newcmd=="cmd_remove_ocr" || newcmd=="cmd_move_ocr" || newcmd=="cmd_dict"){ //do not refresh
                                     return;
                                 } else {
-                                if(newcmd=="cmd_list" || newcmd=="cmd_track" || newcmd=="cmd_crack" || newcmd=="cmd_train") newcmd=newcmd+"_update"
+                                if(newcmd=="cmd_list" || newcmd=="cmd_track" || newcmd == "cmd_tracklist" || newcmd=="cmd_crack" || newcmd=="cmd_train") newcmd=newcmd+"_update"
 								//do not refresh if certain text on response is found
 								if(newcmd.match(/update/) && 
 			 					(
@@ -473,7 +483,7 @@ function runCommandX(cmd,params) {
                     pass
         if page == "/cmd_list": # list mods
             self.pages["/cmd_list"] = "<pre>Waiting for a list of available modules...</pre>"
-            runcmd = "(python -i cintruder --list "+ "|tee /tmp/out) &"
+            runcmd = "(python -i cintruder --mods-list "+ "|tee /tmp/out) &"
         if page == "/cmd_list_update":
             if not os.path.exists('/tmp/out'):
                 open('/tmp/out', 'w').close()
@@ -491,6 +501,14 @@ function runCommandX(cmd,params) {
                 open('/tmp/out', 'w').close()
             with open('/tmp/out', 'r') as f:
                 self.pages["/cmd_track_update"] = "<pre>"+f.read()+"<pre>"
+        if page == "/cmd_tracklist": # list last tracks
+            self.pages["/cmd_tracklist"] = "<pre>Waiting for a list of last tracks...</pre>"
+            runcmd = "(python -i cintruder --tracked-list "+ "|tee /tmp/out) &"
+        if page == "/cmd_tracklist_update":
+            if not os.path.exists('/tmp/out'):
+                open('/tmp/out', 'w').close()
+            with open('/tmp/out', 'r') as f:
+                self.pages["/cmd_tracklist_update"] = "<pre>"+f.read()+"<pre>"
         if page == "/cmd_train": # training
             self.pages["/cmd_train"] = "<pre>Waiting for training results...</pre>"
             if pGet["tor"]=="on": 
@@ -517,6 +535,8 @@ function runCommandX(cmd,params) {
                 cmd_options = cmd_options + "--proxy 'http://localhost:8118' "
             if pGet["verbose"]=="on":
                 cmd_options = cmd_options + "--verbose "
+            if not pGet["colourID"]=="off":
+                cmd_options = cmd_options + "--set-id='" + pGet["colourID"] + "' "
             if not pGet["module"]=="off":
                 cmd_options = cmd_options + "--mod='" + pGet["module"] + "' "
             if not pGet["xml"]=="off":

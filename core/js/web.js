@@ -1,7 +1,7 @@
 /*
 This file is part of the cintruder project, http://cintruder.03c8.net
 
-Copyright (c) 2012/2016 psy <epsylon@riseup.net>
+Copyright (c) 2012/2019 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -130,6 +130,13 @@ function SetColourID() {
    else{
         document.getElementById("set_id").value ='';
         document.getElementById('ifMod_colour').style.display = 'none';
+   }
+   if((document.getElementById('set_colour_id3').checked == true)) {
+        document.getElementById('ifMod_colour2').style.display = 'block';
+   }
+   else{
+        document.getElementById("set_id3").value ='';
+        document.getElementById('ifMod_colour2').style.display = 'none';
    }
 }
 function SetCrackModule() {
@@ -267,6 +274,12 @@ function CrackCaptchas(){
         }else {
          verbose="off";
         }
+        if(document.getElementById("set_colour_id3").checked)
+        {
+         colourID=document.getElementById("set_id3").value;
+        }else {
+         colourID="off";
+        }
         source_file=document.getElementById("SourceFile2").value;
         crack_url=document.getElementById("crack_url").value;
         if((source_file == "") && (crack_url == "")){
@@ -276,7 +289,7 @@ function CrackCaptchas(){
         if(source_file==""){
         source_file="off"
         }
-        params="crack_url="+escape(crack_url)+"&source_file="+escape(source_file)+"&module="+escape(module)+"&tor="+escape(tor)+"&verbose="+escape(verbose)+"&xml="+escape(xml);
+        params="crack_url="+escape(crack_url)+"&source_file="+escape(source_file)+"&colourID="+escape(colourID)+"&module="+escape(module)+"&tor="+escape(tor)+"&verbose="+escape(verbose)+"&xml="+escape(xml);
          }
          runCommandX("cmd_crack",params);
          if(source_file=="off"){

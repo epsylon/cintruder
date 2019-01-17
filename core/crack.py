@@ -3,7 +3,7 @@
 """
 This file is part of the cintruder project, http://cintruder.03c8.net
 
-Copyright (c) 2012/2016 psy <epsylon@riseup.net>
+Copyright (c) 2012/2019 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -89,11 +89,15 @@ class CIntruderCrack(object):
             print "\nError during cracking!. Is that captcha supported?\n"
             return
         temp = {}
+        try:
+            setids = int(options.setids)
+        except:
+            setids = 3 # default pixel colour id
         for x in range(im.size[1]):
             for y in range(im.size[0]):
                 pix = im.getpixel((y, x))
                 temp[pix] = pix
-                if pix == 3: # pixel colour id 
+                if pix == setids: # pixel colour id 
                     im2.putpixel((y, x), 0)
         inletter = False
         foundletter = False
@@ -103,7 +107,7 @@ class CIntruderCrack(object):
         for y in range(im2.size[0]): # slice across
             for x in range(im2.size[1]): # slice down
                 pix = im2.getpixel((y, x))
-                if pix != 255:
+                if pix == 0: # != 255
                     inletter = True
             if foundletter == False and inletter == True:
                 foundletter = True

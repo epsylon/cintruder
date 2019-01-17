@@ -3,7 +3,7 @@
 """
 This file is part of the cintruder project, http://cintruder.03c8.net
 
-Copyright (c) 2012/2016 psy <epsylon@riseup.net>
+Copyright (c) 2012/2019 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -334,7 +334,35 @@ class cintruder():
                             subprocess.call("cat %s/%s"%(root, name), shell=True)
 
             print "\n[Info] List end...\n"
-            return #sys.exit(2)    
+            return
+        if options.track_list:
+            print "=============================="
+            print "Listing last tracked captchas:"
+            print "==============================\n"
+            top = 'inputs/'
+            tracked_captchas = []
+            for root, dirs, files in os.walk(top, topdown=False):
+                for name in files:
+                    path = os.path.relpath(os.path.join(root, name))
+                    if self.os_sys == "Windows": #check for win32 sys
+                        atime = os.path.getatime(path)
+                    else:
+                        date = os.stat(path)
+                        atime = time.ctime(date.st_atime)
+                    tracked_captchas.append([atime,str(" + "+name),str("   |-> "+path)])
+            tracked_captchas=sorted(tracked_captchas,key=lambda x:x[0]) # sorted by accessed time
+            ca = 0 # to control max number of results
+            for t in tracked_captchas:
+                ca = ca + 1
+                print "-------------------------"
+                for c in t:
+                    if ca < 26:
+                        print c
+                    else:
+                        break
+                print "-------------------------"
+            print "\n[Info] List end...\n"
+            return 
         captchas = self.try_running(self.get_attack_captchas, "\nInternal error getting -captchas-. look at the end of this Traceback.")
         captchas = self.sanitize_captchas(captchas)
         captchas2track = captchas

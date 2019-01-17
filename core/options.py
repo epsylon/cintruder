@@ -3,7 +3,7 @@
 """
 This file is part of the cintruder project, http://cintruder.03c8.net
 
-Copyright (c) 2012/2016 psy <epsylon@riseup.net>
+Copyright (c) 2012/2019 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -25,7 +25,7 @@ class CIntruderOptions(optparse.OptionParser):
         optparse.OptionParser.__init__(self, 
                            description='Captcha Intruder - OCR Bruteforcing Toolkit - by psy',
                            prog='cintruder.py',
-			   version='\nCIntruder v0.3 - 2016 - (GPLv3.0) -> by psy\n',
+			   version='\nCIntruder v0.3.1 - 2019 - (GPLv3.0) -> by psy\n',
                            usage= '\n\ncintruder [OPTIONS]')
         self.add_option("-v", "--verbose", action="store_true", dest="verbose", help="active verbose mode output results")
         self.add_option("--proxy", action="store", dest="proxy", help="use proxy server (tor: http://localhost:8118)")
@@ -34,17 +34,20 @@ class CIntruderOptions(optparse.OptionParser):
         group1 = optparse.OptionGroup(self, "->Tracking")
         group1.add_option("--track", action="store", dest="track", help="download captchas from url (to: 'inputs/')")
         group1.add_option("--track-num", action="store", dest="s_num", help="set number of captchas to download (default: 5)")
+        group1.add_option("--tracked-list", action="store_true", dest="track_list", help="list tracked captchas (from: 'inputs/')")
         self.add_option_group(group1)
+        group6 = optparse.OptionGroup(self, "->Configuration (training/cracking)")
+        group6.add_option("--set-id", action="store", dest="setids", help="set colour's ID manually (use -v for details)")
+        self.add_option_group(group6)
         group2 = optparse.OptionGroup(self, "->Training")
         group2.add_option("--train", action="store", dest="train", help="train using common OCR techniques")
-        group2.add_option("--set-id", action="store", dest="setids", help="set colour's ID manually (use -v for details)")
         self.add_option_group(group2)
         group3 = optparse.OptionGroup(self, "->Cracking")
         group3.add_option("--crack", action="store", dest="crack", help="brute force using local dictionary")
         self.add_option_group(group3)
         group4 = optparse.OptionGroup(self, "->Modules (training/cracking)")
-        group4.add_option("--list", action="store_true", dest="listmods", help="list available modules (from: 'mods/')")
         group4.add_option("--mod", action="store", dest="name", help="set a specific OCR exploiting module")
+        group4.add_option("--mods-list", action="store_true", dest="listmods", help="list available modules (from: 'mods/')")
         self.add_option_group(group4)
         group5 = optparse.OptionGroup(self, "->Post-Exploitation (cracking)")
         group5.add_option("--xml", action="store", dest="xml", help="export result to xml format")
@@ -54,7 +57,7 @@ class CIntruderOptions(optparse.OptionParser):
     def get_options(self, user_args=None):
         (options, args) = self.parse_args(user_args)
         options.args = args
-        if (not options.train and not options.crack and not options.track and not options.listmods and not options.web and not options.update):
+        if (not options.train and not options.crack and not options.track and not options.track_list and not options.listmods and not options.web and not options.update):
             print '='*75
             print ""
             print "        o8%8888,    "

@@ -21,17 +21,20 @@ Options:
   ->Tracking:
     --track=TRACK      download captchas from url (to: 'inputs/')
     --track-num=S_NUM  set number of captchas to download (default: 5)
+    --tracked-list     list last tracked captchas (from: 'inputs/')
+
+  ->Configuration (training/cracking):
+    --set-id=SETIDS    set colour's ID manually (use -v for details)
 
   ->Training:
     --train=TRAIN      train using common OCR techniques
-    --set-id=SETIDS    set colour's ID manually (use -v for details)
 
   ->Cracking:
     --crack=CRACK      brute force using local dictionary
 
   ->Modules (training/cracking):
-    --list             list available modules (from: 'mods/')
     --mod=NAME         set a specific OCR exploiting module
+    --mods-list        list available modules (from: 'mods/')
 
   ->Post-Exploitation (cracking):
     --xml=XML          export result to xml format
