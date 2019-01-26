@@ -19,7 +19,7 @@ with cintruder; if not, write to the Free Software Foundation, Inc., 51
 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 import os, traceback, hashlib, sys, time, socket, urlparse
-import platform, subprocess, re, webbrowser
+import platform, subprocess, re, webbrowser, shutil
 from core.options import CIntruderOptions
 from core.crack import CIntruderCrack
 from core.ocr import CIntruderOCR
@@ -49,6 +49,8 @@ class cintruder():
         self.isurl = 0
         self.os_sys = platform.system()
         self._webbrowser = webbrowser
+        self.GIT_REPOSITORY = 'https://code.03c8.net/epsylon/cintruder' # oficial code source [OK! 26/01/2019]
+        self.GIT_REPOSITORY2 = 'https://github.com/epsylon/cintruder' # mirror source [since: 04/06/2018]
 
     def set_options(self, options):
         """
@@ -315,10 +317,14 @@ class cintruder():
             self.banner()
             try:
                 print("\nTrying to update automatically to the latest stable version\n")
-                Updater()
+                Updater() 
             except:
-                print("\nSomething was wrong!. To have working this feature, you should clone CIntruder with:\n")
-                print("$ git clone https://github.com/epsylon/cintruder\n")
+                print "Not any .git repository found!\n"
+                print "="*30
+                print "\nTo have working this feature, you should clone CIntruder with:\n"
+                print "$ git clone %s" % self.GIT_REPOSITORY
+                print "\nAlso you can try this other mirror:\n"
+                print "$ git clone %s" % self.GIT_REPOSITORY2 + "\n"
         #step 0: list output results and get captcha targets
         if options.listmods:
             print "====================================="
@@ -392,6 +398,8 @@ class cintruder():
                     for captcha in captchas:
                         if captcha is None:
                             print "\n[Error] Applying OCR algorithm... Is that captcha supported?\n"
+                            if os.path.exists('core/images/previews'):
+                                shutil.rmtree('core/images/previews') # remove last OCR
                         else:
                             print "Target:", options.train
                             print "=======\n"
@@ -413,6 +421,8 @@ class cintruder():
                 for captcha in captchas:
                     if captcha is None:
                         print "\n[Error] Trying to bruteforce... Is that captcha supported?\n"
+                        if os.path.exists('core/images/previews'):
+                            shutil.rmtree('core/images/previews') # remove last OCR
                     else:
                         print "Target: ", options.crack
                         print "======="

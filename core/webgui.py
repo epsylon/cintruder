@@ -287,6 +287,34 @@ URL: <input type="radio" onclick="javascript:CrackingCheck();" name="cracking_so
 
         self.pages["/directory-words"] ="""<!DOCTYPE html><html><head><meta http-equiv="Content-type" content="text/html;charset=UTF-8"><script type="text/javascript" src="/lib.js"></script>
 <script language="javascript">
+function AddAll(){
+var inputs = document.getElementsByClassName('word'),
+    ws = [].map.call(inputs, function( input ) {
+      return input.id;
+    }).join("-");
+var array = ws.split('-');
+var arrayLength = array.length;
+for (var i = 0; i < arrayLength; i++) {
+    word = array[i];
+    letter = document.getElementById(word).value;
+    if(letter == ""){
+     window.alert("You need to enter ALL dictionary symbols");
+     return
+    }
+    if(word == ""){
+     word = "off";
+    }else{
+     var w = word.substring(word.lastIndexOf('_')+1);
+     w = "images/previews/ocr/" + w;
+     params="symbol="+escape(w)+"&letter="+escape(letter);
+    }
+    runCommandX("cmd_move_ocr",params);
+    var s = word.substring(word.lastIndexOf('_')+1);
+    document.getElementById(s).style.display = "none";
+  }
+document.getElementById("adding").style.display = "none";
+document.getElementById("AddAll").style.display = "none";
+}
 function Reload(word){
 var w = word.substring(word.lastIndexOf('/')+1);
 document.getElementById(w).style.display = "none";
@@ -323,7 +351,7 @@ runCommandX("cmd_remove_ocr",params);
 setTimeout(function() { Reload(word) }, 2000); // delay 2
 }
 </script>
-<script language="javascript">function ViewWord(word) {window.open(word,"_blank","fulscreen=no, titlebar=yes, top=180, left=320, width=720, height=460, resizable=yes", false);}</script></head><body><table width='100%'><tr><td align='center'><font color='white'><div id="cmdOut"></div></font></td></tr><tr><td><br><center><a href='javascript:runCommandX("cmd_dict");'><font color="cyan"><u>View Dictionary Info</u></font></a></center></td></tr><tr><td>"""+str("".join(self.list_words()))+"""</td></tr></table></body></html>"""
+<script language="javascript">function ViewWord(word) {window.open(word,"_blank","fulscreen=no, titlebar=yes, top=180, left=320, width=720, height=460, resizable=yes", false);}</script></head><body><table width='100%'><tr><td align='center'><font color='white'><div id="cmdOut"></div></font></td></tr><tr><td><br><center><a href='javascript:runCommandX("cmd_dict");'><font color="cyan"><u>View Dictionary Info</u></font></a></center></td></tr><tr><td>"""+str("".join(self.list_words()))+"""</td></tr></table><br><div align='center' style='display:block;' id='AddAll'> <button onclick='AddAll()'>ADD ALL!</button></div></body></html>"""
 
         self.pages["/lib.js"] = """function loadXMLDoc() {
         var xmlhttp;
@@ -397,7 +425,7 @@ function runCommandX(cmd,params) {
         m = []
         t = os.listdir("outputs/words")
         for f in t:
-            ocr_preview = "<br><table style='display:block;' id='"+f+"' name='"+f+"' border='1' width='100%' cellpadding='5' cellspacing='5'><tr><td align='left' width='100%'><font color='cyan'><u><a onclick=javascript:ViewWord('images/previews/ocr/"+f+"');return false;>"+f+"</a></u></td><td align='center'><a onclick=javascript:ViewWord('images/previews/ocr/"+f+"');return false;><img border='1' style='border-color:red;' src='images/previews/ocr/"+f+"'></a></font></td><td align='center'><input type='text' name='letter_"+f+"' id='letter_"+f+"' size='2'></td><td align='center'><input type='submit' class='button' value='ADD!' onclick=javascript:MoveOCR('images/previews/ocr/"+f+"');return false;></td><td align='center'><input type='submit' class='button' value='Discard...' onclick=javascript:RemoveOCR('images/previews/ocr/"+f+"');return false;></td></tr></table>"
+            ocr_preview = "<br><table style='display:block;' id='"+f+"' name='"+f+"' border='1' width='100%' cellpadding='5' cellspacing='5'><tr><td align='left' width='100%'><font color='cyan'><u><a onclick=javascript:ViewWord('images/previews/ocr/"+f+"');return false;>"+f+"</a></u></td><td align='center'><a onclick=javascript:ViewWord('images/previews/ocr/"+f+"');return false;><img border='1' style='border-color:red;' src='images/previews/ocr/"+f+"'></a></font></td><td align='center'><input type='text' class='word' name='letter_"+f+"' id='letter_"+f+"' size='2'></td><td align='center'><input type='submit' class='button' value='ADD!' onclick=javascript:MoveOCR('images/previews/ocr/"+f+"');return false;></td><td align='center'><input type='submit' class='button' value='Discard...' onclick=javascript:RemoveOCR('images/previews/ocr/"+f+"');return false;></td></tr></table>"
             m.append(ocr_preview)
         return m
 

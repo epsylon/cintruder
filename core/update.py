@@ -27,13 +27,16 @@ class Updater(object):
     Update CIntruder automatically from a .git repository
     """     
     def __init__(self):
-        GIT_REPOSITORY = "https://github.com/epsylon/cintruder"
+        GIT_REPOSITORY = "https://code.03c8.net/epsylon/cintruder"
+        GIT_REPOSITORY2 = "https://github.com/epsylon/cintruder"
         rootDir = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', ''))
         if not os.path.exists(os.path.join(rootDir, ".git")):
             print "Not any .git repository found!\n"
             print "="*30
             print "\nTo have working this feature, you should clone CIntruder with:\n"
             print "$ git clone %s" % GIT_REPOSITORY
+            print "\nAlso you can try this other mirror:\n"
+            print "$ git clone %s" % GIT_REPOSITORY2 + "\n"
         else:
             checkout = execute("git checkout . && git pull", shell=True, stdout=PIPE, stderr=PIPE).communicate()[0]
             print checkout

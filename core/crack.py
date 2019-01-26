@@ -87,6 +87,8 @@ class CIntruderCrack(object):
             im = im.convert("P")
         except:
             print "\nError during cracking!. Is that captcha supported?\n"
+            if os.path.exists('core/images/previews'):
+                shutil.rmtree('core/images/previews') # remove last OCR
             return
         temp = {}
         try:
