@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-15 -*-
 """
-This file is part of the cintruder project, http://cintruder.03c8.net
+This file is part of the cintruder project, https://cintruder.03c8.net
 
-Copyright (c) 2012/2016 psy <epsylon@riseup.net>
+Copyright (c) 2012/2020 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -25,15 +25,15 @@ import shutil
 class VectorCompare:
     def magnitude(self, concordance):
         total = 0
-        for word, count in concordance.iteritems():
+        for word, count in concordance.items():
             # print concordance 
             total += count ** 2
         return math.sqrt(total)
 
     def relation(self, concordance1, concordance2):
         topvalue = 0
-        for word, count in concordance1.iteritems():
-            if concordance2.has_key(word):
+        for word, count in concordance1.items():
+            if word in concordance2:
                 topvalue += count * concordance2[word]
         return topvalue / (self.magnitude(concordance1) * self.magnitude(concordance2))
 
@@ -71,11 +71,11 @@ class CIntruderCrack(object):
  
     def crack(self, options):
         v = VectorCompare()
-        path, dirs, files = os.walk(self.dictionary_path).next()
+        path, dirs, files = next(os.walk(self.dictionary_path))
         dictionary = dirs
         imageset = []
         last_letter = None
-        print "\n[Info] Loading dictionary...\n"
+        print("\n[Info] Loading dictionary...\n")
         for letter in dictionary:
             for img in os.listdir(self.dictionary_path+letter):
                 temp = []
@@ -87,7 +87,7 @@ class CIntruderCrack(object):
             im2 = Image.new("P", im.size, 255)
             im = im.convert("P")
         except:
-            print "\nError during cracking!. Is that captcha supported?\n"
+            print("\nError during cracking!. Is that captcha supported?\n")
             return
         temp = {}
         for x in range(im.size[1]):
@@ -125,35 +125,35 @@ class CIntruderCrack(object):
             im3 = im2.crop((letter[0], 0, letter[1], im2.size[1]))
             guess = []
             for image in imageset:
-                for x, y in image.iteritems():
+                for x, y in image.items():
                     if len(y) != 0:
                         guess.append(( v.relation(y[0], self.buildvector(im3)), x))
             guess.sort(reverse=True)
             word_per = guess[0][0] * 100
             if str(word_per) == "100.0":
-                print "Image position   :", countid
-                print "Broken Percent   :", int(round(float(word_per))), "%", "[+CRACKED!]"
+                print("Image position   : "+ str(countid))
+                print("Broken Percent   : "+ str(int(round(float(word_per))))+ "%"+ " [ FULL CRACKED!!! ]")
                 words[countid] = guess[0][1]
             else:
-                print "Image position   :", countid
-                print "Broken Percent   :", "%.4f" % word_per, "%"
+                print("Image position   : "+ str(countid))
+                print("Broken Percent   : %.4f" % word_per + "%")
                 words[countid] = "_"
-            print "Word suggested   :", guess[0][1]
-            print "-------------------"
+            print("Word suggested   : "+ str(guess[0][1]))
+            print("-------------------")
             if word_sug == None:
                 word_sug = str(guess[0][1])
             else:
                 word_sug = word_sug + str(guess[0][1])
             count += 1
             countid = countid + 1
-        print "\n========================================"
+        print("\n========================================")
         if options.verbose:
-            print "[Info] Elapsed OCR time :", elapsed
-            print "========================================"
+            print("[Info] Elapsed OCR time : "+ str(elapsed))
+            print("========================================")
         if word_sug is None:
-            print "Suggested Solution: ", "[ No idea!. Try to add more images to your dictionary/]"
+            print("Suggested Solution: [ No idea!. Try to add more images to your dictionary/ ]")
         else:
-            print "Cracked Words: ", words.values()
-            print "Suggested Solution: ", "[", word_sug, "]"
-        print "========================================\n"
+            print("Cracked Words: " +str(list(words.values())))
+            print("Suggested Solution: [ "+ str(word_sug)+ " ]")
+        print("========================================\n")
         return word_sug

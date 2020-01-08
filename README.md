@@ -11,7 +11,7 @@ in the [LICENSE](./docs/LICENSE) file.
 
 ----------
 
- + Web:  http://cintruder.03c8.net
+ + Web:  https://cintruder.03c8.net
 
 ----------
 
@@ -19,22 +19,22 @@ in the [LICENSE](./docs/LICENSE) file.
 
 #### Installing:
 
-  CIntruder runs on many platforms.  It requires Python (2.x.y) and the following libraries:
+  CIntruder runs on many platforms.  It requires Python (3.x.x) and the following libraries:
 
-       python-pycurl - Python bindings to libcurl
-       python-libxml2 - Python bindings for the GNOME XML library
-       python-imaging - Python Imaging Library
+       python3-pycurl - Python bindings to libcurl (Python 3)
+       python3-libxml2 - Python3 bindings for the GNOME XML library
+       python3-pil - Python Imaging Library (Python3)
 
   On Debian-based systems (ex: Ubuntu), run: 
 
-       sudo apt-get install python-pycurl python-libxml2 python-imaging
+       sudo apt-get install python3-pycurl python3-libxml2 python3-pil
 
 ####  Source libs:
 
        * Python: https://www.python.org/downloads/
-       * PyCurl: http://pycurl.sourceforge.net/
+       * PyCurl: https://pycurl.sourceforge.net/
        * PyLibxml2: https://pypi.python.org/pypi/libxml2-python/
-       * Python Imaging Library (PIL): http://pythonware.com/products/pil/
+       * Python Imaging Library (PIL): https://pythonware.com/products/pil/
 
 ----------
 

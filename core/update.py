@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-15 -*-
 """
-This file is part of the cintruder project, http://cintruder.03c8.net
+This file is part of the cintruder project, https://cintruder.03c8.net
 
-Copyright (c) 2012/2016/2018 psy <epsylon@riseup.net>
+Copyright (c) 2012/2020 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -31,16 +31,16 @@ class Updater(object):
         GIT_REPOSITORY2 = "https://github.com/epsylon/cintruder"
         rootDir = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', ''))
         if not os.path.exists(os.path.join(rootDir, ".git")):
-            print "Not any .git repository found!\n"
-            print "="*30
-            print "\nTo have working this feature, you should clone CIntruder with:\n"
-            print "$ git clone %s" % GIT_REPOSITORY
-            print "\nAlso you can try this other mirror:\n"
-            print "$ git clone %s" % GIT_REPOSITORY2 + "\n"
+            print("Not any .git repository found!\n")
+            print("="*30)
+            print("\nTo have working this feature, you should clone CIntruder with:\n")
+            print("$ git clone %s" % GIT_REPOSITORY)
+            print("\nAlso you can try this other mirror:\n")
+            print("$ git clone %s" % GIT_REPOSITORY2 + "\n")
         else:
             checkout = execute("git checkout . && git pull", shell=True, stdout=PIPE, stderr=PIPE).communicate()[0]
-            print checkout
+            print(checkout)
             if not "Already up-to-date" in checkout:
-                print "Congratulations!! CIntruder has been updated... ;-)\n"
+                print("Congratulations!! CIntruder has been updated... ;-)\n")
             else:
-                print "Your CIntruder doesn't need to be updated... ;-)\n"
+                print("Your CIntruder doesn't need to be updated... ;-)\n")

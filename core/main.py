@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-15 -*-
 """
-This file is part of the cintruder project, http://cintruder.03c8.net
+This file is part of the cintruder project, https://cintruder.03c8.net
 
-Copyright (c) 2012/2019 psy <epsylon@riseup.net>
+Copyright (c) 2012/2020 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License along
 with cintruder; if not, write to the Free Software Foundation, Inc., 51
 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
-import os, traceback, hashlib, sys, time, socket, urlparse
+import os, traceback, hashlib, sys, time, socket
 import platform, subprocess, re, webbrowser, shutil
 from core.options import CIntruderOptions
 from core.crack import CIntruderCrack
@@ -26,7 +26,11 @@ from core.ocr import CIntruderOCR
 from core.curl import CIntruderCurl
 from core.xml_export import CIntruderXML
 from core.update import Updater
-from urlparse import urlparse
+try:
+    from urlparse import urlparse
+except:
+    import urllib.request, urllib.parse, urllib.error
+    from urllib.parse import urlparse
 
 # set to emit debug messages about errors (0 = off).
 DEBUG = 0
@@ -72,40 +76,26 @@ class cintruder():
         self._webbrowser = browser
 
     def banner(self):
-        print '='*75
-        print ""
-        print "        o8%8888,    "
-        print "       o88%8888888. "
-        print "      8'-    -:8888b   "
-        print "     8'         8888  "
-        print "    d8.-=. ,==-.:888b  "
-        print "    >8 `~` :`~' d8888   "
-        print "    88         ,88888   "
-        print "    88b. `-~  ':88888  "
-        print "    888b \033[1;31m~==~\033[1;m .:88888 "
-        print "    88888o--:':::8888      "
-        print "    `88888| :::' 8888b  "
-        print "    8888^^'       8888b  "
-        print "   d888           ,%888b.   "
-        print "  d88%            %%%8--'-.  "
-        print " /88:.__ ,       _%-' ---  -  "
-        print "     '''::===..-'   =  --.  `\n"
-        print self.optionParser.description, "\n"
-        print '='*75
-
-    @classmethod
-    def try_running(cls, func, error, args=None):
-        """
-        Try running a function and print some error if it fails and exists with
-        a fatal error.
-        """
-        args = args or []
-        try:
-            return func(*args)
-        except Exception:
-            print(error, "error")
-            if DEBUG:
-                traceback.print_exc()
+        print('='*75)
+        print("")
+        print("        o8%8888,    ")
+        print("       o88%8888888. ")
+        print("      8'-    -:8888b   ")
+        print("     8'         8888  ")
+        print("    d8.-=. ,==-.:888b  ")
+        print("    >8 `~` :`~' d8888   ")
+        print("    88         ,88888   ")
+        print("    88b. `-~  ':88888  ")
+        print("    888b \033[1;31m~==~\033[1;m .:88888 ")
+        print("    88888o--:':::8888      ")
+        print("    `88888| :::' 8888b  ")
+        print("    8888^^'       8888b  ")
+        print("   d888           ,%888b.   ")
+        print("  d88%            %%%8--'-.  ")
+        print(" /88:.__ ,       _%-' ---  -  ")
+        print("     '''::===..-'   =  --.  `\n")
+        print(self.optionParser.description, "\n")
+        print('='*75)
 
     def get_attack_captchas(self):
         """
@@ -114,36 +104,35 @@ class cintruder():
         captchas = []
         options = self.options
         p = self.optionParser
-
         if options.train:
-            print('='*75)
-            print(str(p.version))
-            print('='*75)
+            print(('='*75))
+            print((str(p.version)))
+            print(('='*75))
             print("Starting to 'train'...")
-            print('='*75)
+            print(('='*75))
             captchas = [options.train]
         if options.crack:
-            print('='*75)
-            print(str(p.version))
-            print('='*75)
+            print(('='*75))
+            print((str(p.version)))
+            print(('='*75))
             print("Starting to 'crack'")
-            print('='*75)
+            print(('='*75))
             captchas = [options.crack]
         if options.track:
-            print('='*75)
-            print(str(p.version))
-            print('='*75)
+            print(('='*75))
+            print((str(p.version)))
+            print(('='*75))
             print("Tracking captchas from url...")
-            print('='*75+"\n")
-            captchas = [options.track]       
+            print(('='*75))
+            captchas = [options.track]
         return captchas
 
-    def train(self, captchas):
+    def train(self, captcha):
         """
         Learn mode:
             + Add words to the brute forcing dictionary
         """
-        self.train_captcha(captchas)
+        self.train_captcha(captcha)
 
     def train_captcha(self, captcha):
         """
@@ -155,19 +144,19 @@ class cintruder():
         options = self.options
         # step 1: applying OCR techniques
         if options.name: # with a specific OCR module
-            print "[Info] Using module: [", options.name, "]"
+            print("[Info] Loading module: [ "+ options.name + " ]\n")
             try:
                 sys.path.append('mods/%s/'%(options.name))
                 exec("from " + options.name + "_ocr" + " import CIntruderOCR") # import module
             except Exception:
-                print "\n[Error] '"+ options.name+ "' module not found!\n"
+                print("\n[Error] '"+ options.name+ "' module not found!\n")
                 return #sys.exit(2)
             if options.setids: # with a specific colour ID
                 setids = int(options.setids)
                 if setids >= 0 and setids <= 255:
                     self.optionOCR = CIntruderOCR(captcha, options)
                 else:
-                    print "\n[Error] You must enter a valid RGB colour ID number (between 0 and 255)\n"
+                    print("\n[Error] You must enter a valid RGB colour ID number (between 0 and 255)\n")
                     return #sys.exit(2)
             else:
                 self.optionOCR = CIntruderOCR(captcha, options)
@@ -177,17 +166,17 @@ class cintruder():
                 if setids >= 0 and setids <= 255:
                     self.optionOCR = CIntruderOCR(captcha, options)
                 else:
-                    print "\n[Error] You must enter a valid RGB colour ID number (between 0 and 255)\n"
+                    print("\n[Error] You must enter a valid RGB colour ID number (between 0 and 255)\n")
                     return #sys.exit(2)
             else:
                 self.optionOCR = CIntruderOCR(captcha, options)
 
-    def crack(self, captchas):
+    def crack(self, captcha):
         """
         Crack mode:
             + Brute force target's captcha against a dictionary
         """
-        self.crack_captcha(captchas)
+        self.crack_captcha(captcha)
 
     def crack_captcha(self, captcha):
         """
@@ -195,13 +184,12 @@ class cintruder():
         """
         options = self.options
         if options.name:
-            print "Loading module:", options.name
-            print "==============="
+            print("[Info] Loading module: ["+ str(options.name) + "] \n")
             try:
                 sys.path.append('mods/%s/'%(options.name))
                 exec("from " + options.name + "_crack" + " import CIntruderCrack")
             except Exception:
-                print "\n[Error] '"+ options.name+ "' module not found!\n"
+                print("\n[Error] '"+ options.name+ "' module not found!\n")
                 return #sys.exit(2)
             self.optionCrack = CIntruderCrack(captcha)
             w = self.optionCrack.crack(options)
@@ -220,8 +208,11 @@ class cintruder():
             os.mkdir("inputs/")
         for captcha in captchas:
             c = self.remote_captcha(captcha, proxy)
-            l.append(c)
-        return l
+            if c:
+                l.append(c)
+                return l
+            else:
+                return
 
     def remote_captcha(self, captcha, proxy):
         """
@@ -233,9 +224,9 @@ class cintruder():
         buf = self.optionCurl.request()
         if buf != "exit":
             m = hashlib.md5()
-            m.update(captcha)
+            m.update(captcha.encode('utf-8'))
             c = "%s.gif"%(m.hexdigest())
-            h = "inputs/" + c
+            h = "inputs/" + str(c)
             f = open(h, 'wb')
             f.write(buf.getvalue())
             f.close
@@ -251,10 +242,10 @@ class cintruder():
         if self.options.xml and not (self.options.train):
             self.optionXML = CIntruderXML(captchas)
             if self.word_sug == None:
-                print "[Info] XML NOT created!. There are not words to suggest..."
+                print("[Info] XML NOT created!. There are not words to suggest...")
             else:
                 self.optionXML.print_xml_results(captchas, self.options.xml, self.word_sug)
-                print "[Info] XML created:", self.options.xml, "\n"
+                print("[Info] XML created: "+str(self.options.xml)+ "\n")
 
     def track(self, captchas, proxy, num_tracks):
         """
@@ -280,25 +271,25 @@ class cintruder():
             self.optionCurl = CIntruderCurl(captcha, self.ignoreproxy, proxy)
             buf = self.optionCurl.request()
             if options.verbose:
-                print "\n[-]Connection data:"
+                print("\n[-]Connection data:")
                 out = self.optionCurl.print_options()
-                print '-'*45
+                print('-'*45)
             if buf != "exit":
                 m = hashlib.md5()
-                m.update("%s%s"%(time.time(), captcha))
+                m.update(captcha.encode('utf-8'))
                 h = "inputs/%s/%s.gif"%(self.domain, m.hexdigest())
                 f = open(h, 'wb')
                 f.write(buf.getvalue())
                 f.close
                 buf.close
-                print "[Info] Saved:", h
-                print "------------"
+                print("[Info] Saved: "+ str(h))
+                print("------------")
             i=i+1
         if buf != "exit":
-            print "\n================="
-            print "Tracking Results:"
-            print "================="
-            print "\nNumber of tracked captchas: [", num_tracks, "] \n"
+            print("\n=================")
+            print("Tracking Results:")
+            print("=================")
+            print("\nNumber of tracked captchas: [ "+ str(num_tracks)+" ] \n")
 
     def run(self, opts=None):
         """ 
@@ -319,17 +310,17 @@ class cintruder():
                 print("\nTrying to update automatically to the latest stable version\n")
                 Updater() 
             except:
-                print "Not any .git repository found!\n"
-                print "="*30
-                print "\nTo have working this feature, you should clone CIntruder with:\n"
-                print "$ git clone %s" % self.GIT_REPOSITORY
-                print "\nAlso you can try this other mirror:\n"
-                print "$ git clone %s" % self.GIT_REPOSITORY2 + "\n"
+                print("Not any .git repository found!\n")
+                print("="*30)
+                print("\nTo have working this feature, you should clone CIntruder with:\n")
+                print("$ git clone %s" % self.GIT_REPOSITORY)
+                print("\nAlso you can try this other mirror:\n")
+                print("$ git clone %s" % self.GIT_REPOSITORY2 + "\n")
         #step 0: list output results and get captcha targets
         if options.listmods:
-            print "====================================="
-            print "Listing specific OCR exploit modules:"
-            print "=====================================\n"
+            print("=====================================")
+            print("Listing specific OCR exploit modules:")
+            print("=====================================\n")
             top = 'mods/'
             for root, dirs, files in os.walk(top, topdown=False):
                 for name in files:
@@ -339,12 +330,12 @@ class cintruder():
                         else:
                             subprocess.call("cat %s/%s"%(root, name), shell=True)
 
-            print "\n[Info] List end...\n"
+            print("\n[Info] List end...\n")
             return
         if options.track_list:
-            print "=============================="
-            print "Listing last tracked captchas:"
-            print "==============================\n"
+            print("==============================")
+            print("Listing last tracked captchas:")
+            print("==============================\n")
             top = 'inputs/'
             tracked_captchas = []
             for root, dirs, files in os.walk(top, topdown=False):
@@ -360,16 +351,16 @@ class cintruder():
             ca = 0 # to control max number of results
             for t in tracked_captchas:
                 ca = ca + 1
-                print "-------------------------"
+                print("-------------------------")
                 for c in t:
                     if ca < 26:
-                        print c
+                        print(c)
                     else:
                         break
-                print "-------------------------"
-            print "\n[Info] List end...\n"
+                print("-------------------------")
+            print("\n[Info] List end...\n")
             return 
-        captchas = self.try_running(self.get_attack_captchas, "\nInternal error getting -captchas-. look at the end of this Traceback.")
+        captchas = self.get_attack_captchas()
         captchas = self.sanitize_captchas(captchas)
         captchas2track = captchas
         if self.isurl == 1 and (options.train or options.crack):
@@ -378,9 +369,9 @@ class cintruder():
             else:
                 captchas = self.remote(captchas, "")
             if options.verbose:
-                print "[-] Connection data:"
+                print("\n[-] Connection data:")
                 out = self.optionCurl.print_options()
-                print '-'*45
+                print('-'*45)
         #step 0: track
         if options.track:
             if options.s_num:
@@ -388,59 +379,56 @@ class cintruder():
             else:
                 num_tracks = int(5) # default track connections
             if options.proxy:
-                self.try_running(self.track, "\nInternal problems tracking: ", (captchas2track, options.proxy, num_tracks))
+                self.track(captchas2track, options.proxy, num_tracks)
             else:
-                self.try_running(self.track, "\nInternal problems tracking: ", (captchas2track, "", num_tracks))
+                self.track(captchas2track, "", num_tracks)
         #step 1: train
         if options.train:
             try:
                 if len(captchas) == 1:
                     for captcha in captchas:
                         if captcha is None:
-                            print "\n[Error] Applying OCR algorithm... Is that captcha supported?\n"
+                            print("\n[Error] Applying OCR algorithm... Is that captcha supported?\n")
                             if os.path.exists('core/images/previews'):
                                 shutil.rmtree('core/images/previews') # remove last OCR
                         else:
-                            print "Target:", options.train
-                            print "=======\n"
-                            self.try_running(self.train, "\nInternal problems training: ", (captchas))   
+                            print("\n[Info] Target: "+ options.train+"\n")
+                            self.train(captcha)
                 else:
                     for captcha in captchas:
                         if len(captchas) > 1 and captcha is None:
                             pass
                         else:
-                            print "Target: ", options.train
-                            self.try_running(self.train, "\nInternal problems training: ", (captchas))
+                            print("\n[Info] Target: "+ options.train+"\n")
+                            self.train(captcha)
             except:
-                print "\n[Error] Something wrong getting captcha. Aborting...\n"
+                print("[Error] Something wrong getting captcha. Aborting...\n")
             if options.xml:
-                print "[Info] You don't need export to XML on this mode... File not generated!\n"
+                print("[Info] You don't need export to XML on this mode... File not generated!\n")
         #step 2: crack
         if options.crack:
             if len(captchas) == 1:
                 for captcha in captchas:
                     if captcha is None:
-                        print "\n[Error] Trying to bruteforce... Is that captcha supported?\n"
+                        print("\n[Error] Trying to bruteforce... Is that captcha supported?\n")
                         if os.path.exists('core/images/previews'):
                             shutil.rmtree('core/images/previews') # remove last OCR
                     else:
-                        print "Target: ", options.crack
-                        print "======="
-                        self.try_running(self.crack, "\nInternal problems cracking: ", (captchas))
+                        print("\n[Info] Target: "+ options.crack+"\n")
+                        self.crack(captcha)
             else:
                 for captcha in captchas:
                     if len(captchas) > 1 and captcha is None:
                         pass
                     else:
-                        print "Target: ", options.crack
-                        print "======="
-                        self.try_running(self.crack, "\nInternal problems cracking: ", (captchas))
+                        print("\n[Info] Target: "+ options.crack+"\n")
+                        self.crack(captcha)
             if options.command:
-                print "[Info] Executing tool connector... \n"
+                print("[Info] Executing tool connector... \n")
                 if self.word_sug is not None:
-                    print "[Info] This is the word suggested by CIntruder: [", self.word_sug, "] \n"
+                    print("[Info] This is the word suggested by CIntruder: [ "+ str(self.word_sug)+ " ] \n")
                 else:
-                    print "[Error] CIntruder hasn't any word to suggest... Handlering tool process aborted! ;(\n"
+                    print("[Error] CIntruder hasn't any word to suggest... Handlering tool process aborted! ;(\n")
                     sys.exit(2)
                 if "CINT" in options.command: # check parameter CINT on command (*)
                     # change cintruder suggested word for the users captchas input form parameter
@@ -452,10 +440,10 @@ class cintruder():
                         cmd = options.command
                         subprocess.call(cmd, shell=True)
                 else:
-                    print "[Error] Captcha's parameter flag: 'CINT' is not present on:", options.command, "\n"
+                    print("[Error] Captcha's parameter flag: 'CINT' is not present on: "+ str(options.command)+ "\n")
         #step 3: export
         if options.xml:
-            self.try_running(self.export, "\nInternal problems exporting: ", (captchas))
+            self.export(captchas)
 
     def sanitize_captchas(self, captchas):
         """
@@ -470,7 +458,7 @@ class cintruder():
                 self.isurl = 1
             elif self.isurl == 0: # captcha from file
                 (root, ext) = os.path.splitext(captcha)       
-                if ext != '.gif' and ext != '.jpg' and ext != '.jpeg' and ext != '.png': #by the moment                    
+                if ext != '.gif' and ext != '.jpg' and ext != '.jpeg' and ext != '.png': # by the moment                    
                     captcha = None
                     all_captchas.add(captcha)
                 else:
@@ -479,18 +467,20 @@ class cintruder():
         return all_captchas
 
     def create_web_interface(self):
-        from webgui import ClientThread
+        # launch webserver+gui
+        from .webgui import ClientThread
+        import webbrowser
         host = '0.0.0.0'
         port = 9999
-        try: 
+        try:
             webbrowser.open('http://127.0.0.1:9999', new=1)
             tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	    tcpsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-	    tcpsock.bind((host,port))
-	    while True:
-	        tcpsock.listen(4)
-	        (clientsock, (ip, port)) = tcpsock.accept()
-	        newthread = ClientThread(ip, port, clientsock)
+            tcpsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            tcpsock.bind((host,port))
+            while True:
+                tcpsock.listen(4)
+                (clientsock, (ip, port)) = tcpsock.accept()
+                newthread = ClientThread(ip, port, clientsock)
                 newthread.start()
         except (KeyboardInterrupt, SystemExit):
             sys.exit()

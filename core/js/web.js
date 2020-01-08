@@ -1,7 +1,7 @@
 /*
-This file is part of the cintruder project, http://cintruder.03c8.net
+This file is part of the cintruder project, https://cintruder.03c8.net
 
-Copyright (c) 2012/2019 psy <epsylon@riseup.net>
+Copyright (c) 2012/2020 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -159,24 +159,48 @@ function SetXML() {
    }
 }
 function loadRemoteOCR(train_url){
-       document.getElementById("target_captcha_img_path").src="images/previews/last-preview.gif#"+ new Date().getTime();
+       fromDataURL('images/previews/last-preview.gif', function(enc_img) {
+       r = "data:image/gif;base64,";
+       enc_img = enc_img.replace(r, "");
+       var dec_img = atob(enc_img)
+       var img_preview = "data:image/gif;base64,"+dec_img
+       document.getElementById("target_captcha_img_path").src=img_preview;
        document.getElementById('Captcha-IN').style.display = 'block';
        document.getElementById("directory-words").src = "directory-words";
        document.getElementById("OCR-out").style.display = "block";
+ })
 }
 function loadRemoteOCRCrack(crack_url){
-       document.getElementById("target_captcha_img_path").src="images/previews/last-preview.gif#"+ new Date().getTime();
+       fromDataURL('images/previews/last-preview.gif', function(enc_img) {
+       r = "data:image/gif;base64,";
+       enc_img = enc_img.replace(r, "");
+       var dec_img = atob(enc_img)
+       var img_preview = "data:image/gif;base64,"+dec_img
+       document.getElementById("target_captcha_img_path").src=img_preview;
        document.getElementById('Captcha-IN').style.display = 'block';
+ })
 }
 function loadOCRCrack(){
-       document.getElementById("target_captcha_img_path").src="images/previews/last-preview.gif#"+ new Date().getTime();
+       fromDataURL('images/previews/last-preview.gif', function(enc_img) {
+       r = "data:image/gif;base64,";
+       enc_img = enc_img.replace(r, "");
+       var dec_img = atob(enc_img)
+       var img_preview = "data:image/gif;base64,"+dec_img
+       document.getElementById("target_captcha_img_path").src=img_preview;
        document.getElementById('Captcha-IN').style.display = 'block';
+ })
 }
 function loadOCR(){
-       document.getElementById("target_captcha_img_path").src="images/previews/last-preview.gif#"+ new Date().getTime();
+       fromDataURL('images/previews/last-preview.gif', function(enc_img) {
+       r = "data:image/gif;base64,";
+       enc_img = enc_img.replace(r, "");
+       var dec_img = atob(enc_img)
+       var img_preview = "data:image/gif;base64,"+dec_img
+       document.getElementById("target_captcha_img_path").src=img_preview;
        document.getElementById('Captcha-IN').style.display = 'block';
        document.getElementById("directory-words").src = "directory-words";
        document.getElementById("OCR-out").style.display = "block";
+ })
 }
 function TrackCaptchas(){
         if(document.getElementById("tor").checked) {
@@ -304,4 +328,17 @@ function showResults() {
          document.getElementById("Results").style.display = "block";
          document.getElementById('Captcha-IN').style.display = 'none';
          document.getElementById('OCR-out').style.display = 'none';
+}
+function fromDataURL(url, callback) {
+         var httpRequest = new XMLHttpRequest();
+         httpRequest.onload = function() {
+         var fileReader = new FileReader();
+         fileReader.onloadend = function() {
+             callback(fileReader.result);
+         }
+             fileReader.readAsDataURL(httpRequest.response);
+         };
+         httpRequest.open('GET', url);
+         httpRequest.responseType = 'blob';
+         httpRequest.send();
 }

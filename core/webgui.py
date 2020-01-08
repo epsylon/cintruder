@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-15 -*-
 """
-This file is part of the cintruder project, http://cintruder.03c8.net
+This file is part of the cintruder project, https://cintruder.03c8.net
 
-Copyright (c) 2012/2019 psy <epsylon@riseup.net>
+Copyright (c) 2012/2020 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -19,8 +19,12 @@ with cintruder; if not, write to the Free Software Foundation, Inc., 51
 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 import socket, threading, re, base64, os, time
-import webbrowser, subprocess, urllib, json, sys
-from options import CIntruderOptions
+import webbrowser, subprocess, json, sys
+try:
+    from urlparse import urlparse
+except:
+    import urllib.request, urllib.parse, urllib.error
+from .options import CIntruderOptions
 from pprint import pprint
 from shutil import copyfile
 
@@ -38,13 +42,19 @@ class ClientThread(threading.Thread):
     def run(self):
         req = self.socket.recv(2048)
         res = self.pages.get(req)
+        if res is None:
+            self.socket.close()
+            return
         out = "HTTP/1.0 %s\r\n" % res["code"]
         out += "Pragma: no-cache\n"
         out += "Expires: Fri, 30 Oct 1998 00:00:01 GMT\n"
         out += "Cache-Control: no-cache, must-revalidate\n"
         out += "Content-Type: %s\r\n\r\n" % res["ctype"]
         out += "%s" % res["html"]
-        self.socket.send(out)
+        try:
+            self.socket.send(out.encode('utf-8'))
+        except:
+            self.socket.send(out)
         self.socket.close()
         if "run" in res and len(res["run"]):
             subprocess.Popen(res["run"], shell=True)
@@ -53,6 +63,7 @@ class Pages():
     def __init__(self):
         self.options = CIntruderOptions()
         self.pages = {}
+        cintruder_img = open("core/images/cintruder.txt").read() #base64 logo
         if not os.path.exists("outputs/words/"): 
             os.mkdir("outputs/words/")
 
@@ -87,11 +98,11 @@ input.button {
 <center>
 <table border="1" cellpadding="10" cellspacing="5" width="90%">
  <tr>
- <td bgcolor="white"><center><a href="http://cintruder.03c8.net" target="_blank"><img src="images/cintruder.png"></a></center></td>
+ <td bgcolor="white"><center><a href="https://cintruder.03c8.net" target="_blank"><img src='data:image/png;base64,"""+str(cintruder_img)+"""'></a></center></td>
  <td>
 <center><h3><a href="https://github.com/epsylon/cintruder" target="_blank">CINTRUDER</a> is an automatic pentesting tool to bypass <a href="https://en.wikipedia.org/wiki/CAPTCHA" target="_blank">captchas</a><br/><br/>
 Contact: psy (<a href="mailto:epsylon@riseup.net">epsylon@riseup.net</a>) - [<a href="https://03c8.net" target="_blank">03c8.net</a>]<br><br>
-License: <a href="http://www.gnu.org/licenses/quick-guide-gplv3.pdf" target="_blank">GPLv3</a> | Donate: <a href="https://blockchain.info/address/19aXfJtoYJUoXEZtjNwsah2JKN9CK5Pcjw" target="_blank">BTC</a></h3></center>
+License: <a href="https://www.gnu.org/licenses/quick-guide-gplv3.pdf" target="_blank">GPLv3</a> | Donate: <a href="https://blockchain.info/address/19aXfJtoYJUoXEZtjNwsah2JKN9CK5Pcjw" target="_blank">BTC</a></h3></center>
 </td>
  </tr></table><br/>
 <table cellpadding="10" cellspacing="5" width="90%">
@@ -425,7 +436,12 @@ function runCommandX(cmd,params) {
         m = []
         t = os.listdir("outputs/words")
         for f in t:
-            ocr_preview = "<br><table style='display:block;' id='"+f+"' name='"+f+"' border='1' width='100%' cellpadding='5' cellspacing='5'><tr><td align='left' width='100%'><font color='cyan'><u><a onclick=javascript:ViewWord('images/previews/ocr/"+f+"');return false;>"+f+"</a></u></td><td align='center'><a onclick=javascript:ViewWord('images/previews/ocr/"+f+"');return false;><img border='1' style='border-color:red;' src='images/previews/ocr/"+f+"'></a></font></td><td align='center'><input type='text' class='word' name='letter_"+f+"' id='letter_"+f+"' size='2'></td><td align='center'><input type='submit' class='button' value='ADD!' onclick=javascript:MoveOCR('images/previews/ocr/"+f+"');return false;></td><td align='center'><input type='submit' class='button' value='Discard...' onclick=javascript:RemoveOCR('images/previews/ocr/"+f+"');return false;></td></tr></table>"
+            try:
+                with open("core/images/previews/ocr/"+f,'rb') as img_f:
+                    img = "data:image/gif;base64,"+base64.b64encode(img_f.read()).decode('utf-8')
+            except:
+                img = ""
+            ocr_preview = "<br><table style='display:block;' id='"+f+"' name='"+f+"' border='1' width='100%' cellpadding='5' cellspacing='5'><tr><td align='left' width='100%'><font color='cyan'><u><a onclick=javascript:ViewWord('"+img+"');return false;>"+f+"</a></u></td><td align='center'><a onclick=javascript:ViewWord('"+img+"');return false;><img border='1' style='border-color:red;' src='"+img+"'></a></font></td><td align='center'><input type='text' class='word' name='letter_"+f+"' id='letter_"+f+"' size='2'></td><td align='center'><input type='submit' class='button' value='ADD!' onclick=javascript:MoveOCR('images/previews/ocr/"+f+"');return false;></td><td align='center'><input type='submit' class='button' value='Discard...' onclick=javascript:RemoveOCR('images/previews/ocr/"+f+"');return false;></td></tr></table>"
             m.append(ocr_preview)
         return m
 
@@ -441,7 +457,10 @@ function runCommandX(cmd,params) {
 
     def buildGetParams(self, request):
         params = {}
-        path = re.findall("^GET ([^\s]+)", request)
+        try:
+            path = re.findall("^GET ([^\s]+)", request)
+        except:
+            path = re.findall("^GET ([^\s]+)", request.decode('utf-8'))
         if path:
             path = path[0]
             start = path.find("?")
@@ -452,33 +471,47 @@ function runCommandX(cmd,params) {
                         var = f[0]
                         value = f[1]
                         value = value.replace("+", " ")
-                        value = urllib.unquote(value)
+                        value = urllib.parse.unquote(value)
                         params[var] = value
         return params
 
     def get(self, request):
         cmd_options = ""
         runcmd = ""
-        res = re.findall("^GET ([^\s]+)", request)
+        try:
+            res = re.findall("^GET ([^\s]+)", request)
+        except:
+            res = re.findall("^GET ([^\s]+)", request.decode('utf-8'))
         if res is None:
             return
         pGet = {}
-        page = res[0]
+        try:
+            page = res[0]
+        except:
+            return
         paramStart = page.find("?")
         if paramStart != -1:
             page = page[:paramStart]
             pGet = self.buildGetParams(request)
         if page.startswith("/images/") or page.startswith("/js/") or page.startswith("/inputs/"):
             if os.path.exists("core/"+page[1:]):
-                f=open("core/"+page[1:])
-                self.pages[page]=f.read()
+                try:
+                    f=open("core/"+page[1:],'r',encoding="utf-8")
+                    data = f.read()
+                except:
+                    try:
+                        with open("core/"+page[1:],'rb') as img_f:
+                            data = base64.b64encode(img_f.read()).decode('utf-8')
+                    except:
+                        data = ""
+                self.pages[page]=data
         if page == "/cmd_dict": # view dictionary info
-            path, dirs, files = os.walk("dictionary/").next()
+            path, dirs, files = next(os.walk("dictionary/"))
             total_dirs = len(dirs)
             total_files = len(files)
             size = 0
             for d in dirs:
-                path, dirs, files = os.walk("dictionary/"+d).next()
+                path, dirs, files = next(os.walk("dictionary/"+d))
                 total_files = total_files + len(files)
                 for f in files:
                     size += os.path.getsize("dictionary/"+d+"/"+f)

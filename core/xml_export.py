@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-15 -*-
 """
-This file is part of the cintruder project, http://cintruder.03c8.net
+This file is part of the cintruder project, https://cintruder.03c8.net
 
-Copyright (c) 2012/2016 psy <epsylon@riseup.net>
+Copyright (c) 2012/2020 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -36,7 +36,7 @@ class CIntruderXML(object):
         root = xml.Element("report")
         hdr = xml.SubElement(root, "header")
         title = xml.SubElement(hdr, "title")
-        title.text = "Captcha Intruder [http://cintruder.03c8.net] Report: " + str(datetime.datetime.now())
+        title.text = "Captcha Intruder [https://cintruder.03c8.net] Report: " + str(datetime.datetime.now())
         target = xml.SubElement(root, "target")
         captcha = xml.SubElement(target, "captcha")
         words = xml.SubElement(captcha, "word")

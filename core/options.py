@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-15 -*-
 """
-This file is part of the cintruder project, http://cintruder.03c8.net
+This file is part of the cintruder project, https://cintruder.03c8.net
 
-Copyright (c) 2012/2019 psy <epsylon@riseup.net>
+Copyright (c) 2012/2020 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -25,7 +25,7 @@ class CIntruderOptions(optparse.OptionParser):
         optparse.OptionParser.__init__(self, 
                            description='Captcha Intruder - OCR Bruteforcing Toolkit - by psy',
                            prog='cintruder.py',
-			   version='\nCIntruder v0.3.1 - 2019 - (GPLv3.0) -> by psy\n',
+			   version='\nCIntrud3r v0.4 - 2012/2020 - (GPLv3.0) -> by psy\n',
                            usage= '\n\ncintruder [OPTIONS]')
         self.add_option("-v", "--verbose", action="store_true", dest="verbose", help="active verbose mode output results")
         self.add_option("--proxy", action="store", dest="proxy", help="use proxy server (tor: http://localhost:8118)")
@@ -58,32 +58,32 @@ class CIntruderOptions(optparse.OptionParser):
         (options, args) = self.parse_args(user_args)
         options.args = args
         if (not options.train and not options.crack and not options.track and not options.track_list and not options.listmods and not options.web and not options.update):
-            print '='*75
-            print ""
-            print "        o8%8888,    "
-            print "       o88%8888888. " 
-            print "      8'-    -:8888b   "
-            print "     8'         8888  "
-            print "    d8.-=. ,==-.:888b  "
-            print "    >8 `~` :`~' d8888   "
-            print "    88         ,88888   "
-            print "    88b. `-~  ':88888  "
-            print "    888b \033[1;31m~==~\033[1;m .:88888 "
-            print "    88888o--:':::8888      "
-            print "    `88888| :::' 8888b  "
-            print "    8888^^'       8888b  "
-            print "   d888           ,%888b.   "
-            print "  d88%            %%%8--'-.  "
-            print " /88:.__ ,       _%-' ---  -  "
-            print "     '''::===..-'   =  --.  `\n"
-            print  self.description, "\n"
-            print '='*75, "\n"
-            print " * Project site: http://cintruder.03c8.net", "\n"
-            print " * IRC: irc.freenode.net -> #cintruder", "\n"
-            print " * Mailing list: cintruder-users@lists.sf.net", "\n"
-            print '='*75
-            print "\n -> For HELP use: -h or --help"
-            print "\n -> For WEB interface use: --gui\n"
-            print '='*55, "\n"
+            print('='*75)
+            print("")
+            print("        o8%8888,    ")
+            print("       o88%8888888. ") 
+            print("      8'-    -:8888b   ")
+            print("     8'         8888  ")
+            print("    d8.-=. ,==-.:888b  ")
+            print("    >8 `~` :`~' d8888   ")
+            print("    88         ,88888   ")
+            print("    88b. `-~  ':88888  ")
+            print("    888b \033[1;31m~==~\033[1;m .:88888 ")
+            print("    88888o--:':::8888      ")
+            print("    `88888| :::' 8888b  ")
+            print("    8888^^'       8888b  ")
+            print("   d888           ,%888b.   ")
+            print("  d88%            %%%8--'-.  ")
+            print(" /88:.__ ,       _%-' ---  -  ")
+            print("     '''::===..-'   =  --.  `\n")
+            print(self.description, "\n")
+            print('='*75, "\n")
+            print(" * Project site: https://cintruder.03c8.net", "\n")
+            print(" * IRC: irc.freenode.net -> #cintruder", "\n")
+            print(" * Mailing list: cintruder-users@lists.sf.net", "\n")
+            print('='*75)
+            print("\n -> For HELP use: -h or --help")
+            print("\n -> For WEB interface use: --gui\n")
+            print('='*55, "\n")
             return False
         return options

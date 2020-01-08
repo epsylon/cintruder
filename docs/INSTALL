@@ -1,6 +1,6 @@
-============================================
-CIntruder - [cintruder.03c8.net] - 2012/2016
-============================================
+====================================================
+CIntruder - [cintruder.03c8.net] - 2012/2020
+====================================================
 
 Captcha Intruder is an automatic pentesting tool to bypass captchas.
 
@@ -8,17 +8,17 @@ Captcha Intruder is an automatic pentesting tool to bypass captchas.
 How-to INSTALL:
 ===================
 
-CIntruder runs on many platforms.  It requires Python and the following libraries:
+CIntruder runs on many platforms. It requires Python (3.x.x) and the following libraries:
 
-    - python-pycurl  - Python bindings to libcurl
-    - python-libxml2 - Python bindings for the GNOME XML library
-    - python-imaging - Python Imaging Library
+    - python3-pycurl - Python bindings to libcurl (Python 3)
+    - python3-libxml2 - Python3 bindings for the GNOME XML library
+    - python3-pil - Python Imaging Library (Python3)
 
 =========
 
 On Debian-based systems (ex: Ubuntu), run: 
 
-    sudo apt-get install python-pycurl python-libxml2 python-imaging
+    sudo apt-get install python3-pycurl python3-libxml2 python3-pil
 
 =========
 
@@ -32,7 +32,7 @@ Or write directly to:
 
 Website: 
 
-    - http://cintruder.03c8.net/
+    - https://cintruder.03c8.net/
 
 =========
 

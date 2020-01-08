@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-15 -*-
 """
-This file is part of the cintruder project, http://cintruder.03c8.net
+This file is part of the cintruder project, https://cintruder.03c8.net
 
-Copyright (c) 2012/2016 psy <epsylon@riseup.net>
+Copyright (c) 2012/2020 psy <epsylon@riseup.net>
 
 cintruder is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -19,11 +19,7 @@ with cintruder; if not, write to the Free Software Foundation, Inc., 51
 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 import pycurl
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from io import BytesIO
 
 class CIntruderCurl(object):
     """
@@ -41,7 +37,7 @@ class CIntruderCurl(object):
         self.handle = pycurl.Curl()
         self.verbosity = 0
         self.url = self.set_url(captcha)
-        self.captcha = StringIO()
+        self.captcha = BytesIO()
         self.proxy = self.set_proxy(ignoreproxy, proxy)
         self.set_option(pycurl.SSL_VERIFYHOST, 0)
         self.set_option(pycurl.SSL_VERIFYPEER, 0)
@@ -96,7 +92,7 @@ class CIntruderCurl(object):
         """
         Set the given option.
         """
-        apply(self.handle.setopt, args)
+        self.handle.setopt(*args)
 
     def request(self):
         """
@@ -105,7 +101,7 @@ class CIntruderCurl(object):
         if self.agent:
             self.set_option(pycurl.USERAGENT, self.agent)
         if self.referer:
-            self.set_option(pycurl.REFERER, self.referer) 
+            self.set_option(pycurl.REFERER, self.referer)
         if self.proxy:
             self.set_option(pycurl.PROXY, self.proxy)
         if self.ignoreproxy:
@@ -117,11 +113,14 @@ class CIntruderCurl(object):
         self.handle.setopt(self.handle.WRITEFUNCTION, self.captcha.write)
         try:
             self.handle.perform()
-            print "[Info] Getting captcha...\n"                
+            print("\n[Info] Getting captcha...")           
             return self.captcha
-        except pycurl.error, error:
-            errno, errstr = error
-            print '\n[Error] Connection error!:', errstr, "\n"
+        except pycurl.error as error:
+            try:
+                errno, errstr = error
+            except:
+                errno, errstr = "unknown!", "unknown!"
+            print('\n[Error] Connection error... '+ str(errstr))
             return "exit"
  
     def close(self):
@@ -135,11 +134,11 @@ class CIntruderCurl(object):
         """
         Print selected options.
         """
-        print "\n[-]Verbose: active"
-        print "[-]HTTP User Agent:", self.agent
-        print "[-]HTTP Referer:", self.referer
+        print("\n[-] Verbose: active")
+        print("[-] HTTP User Agent: "+str(self.agent))
+        print("[-] HTTP Referer: "+ str(self.referer))
         if self.ignoreproxy:
-            print "[-]Proxy:", "No proxy!"
+            print("[-] Proxy: No proxy!")
         else:
-            print "[-]Proxy:", self.proxy
-        print "[-]URL:", self.url, "\n"
+            print("[-] Proxy: "+ str(self.proxy))
+        print("[-] URL: "+ str(self.url)+ "\n")
