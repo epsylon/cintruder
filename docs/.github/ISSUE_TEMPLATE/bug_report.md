@@ -21,7 +21,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Running environment:**
- - cintruder version [e.g. 0.1]
+ - cintruder version [e.g. 0.4]
  - Installation method [e.g. git]
  - Operating system: [e.g. Debian 4.19.16-1~bpo9+1 (2019-02-07) ]
  - Python version [e.g. 3.7]

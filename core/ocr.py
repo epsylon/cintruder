@@ -112,6 +112,7 @@ class CIntruderOCR(object):
         count = 0
         for letter in letters:
             m = hashlib.md5()
+            m.update(str(letter))
             im3 = im2.crop(( letter[0], 0, letter[1], im2.size[1] ))
             im3.save("outputs/words/%s.gif"%(m.hexdigest()))
             im3.save("core/images/previews/ocr/%s.gif"%(m.hexdigest()))
@@ -124,7 +125,7 @@ class CIntruderOCR(object):
         if count == 0:
             print("\nOuch!. Looks like this captcha is resisting to our OCR methods... by the moment ;-)\n")
             print("Try this...\n") 
-            print("    1) Check colour's ID values and quantity of pixels of each by using verbose") 
+            print("    1) Check colour's ID values and quantity of pixels of each symbol using verbose") 
             print("    2) Set different ID values to your OCR configuration and try it again")
             print("    3) Try to apply some image filters (ex: B/W) manually with an editor (ex: GIMP) to your target")
             print("    4) Maybe there is a module that works correctly for this captcha...\n")

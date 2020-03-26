@@ -122,6 +122,7 @@ class CIntruderCrack(object):
         words = {}
         for letter in letters:
             m = hashlib.md5()
+            m.update(str(letter))
             im3 = im2.crop((letter[0], 0, letter[1], im2.size[1]))
             guess = []
             for image in imageset:

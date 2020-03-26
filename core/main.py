@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License along
 with cintruder; if not, write to the Free Software Foundation, Inc., 51
 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
-import os, traceback, hashlib, sys, time, socket
+import os, traceback, hashlib, sys, time, socket, datetime
 import platform, subprocess, re, webbrowser, shutil
 from core.options import CIntruderOptions
 from core.crack import CIntruderCrack
@@ -224,7 +224,7 @@ class cintruder():
         buf = self.optionCurl.request()
         if buf != "exit":
             m = hashlib.md5()
-            m.update(captcha.encode('utf-8'))
+            m.update(captcha.encode('utf-8')+str(datetime.datetime.now()))
             c = "%s.gif"%(m.hexdigest())
             h = "inputs/" + str(c)
             f = open(h, 'wb')
@@ -276,7 +276,7 @@ class cintruder():
                 print('-'*45)
             if buf != "exit":
                 m = hashlib.md5()
-                m.update(captcha.encode('utf-8'))
+                m.update(captcha.encode('utf-8')+str(datetime.datetime.now()))
                 h = "inputs/%s/%s.gif"%(self.domain, m.hexdigest())
                 f = open(h, 'wb')
                 f.write(buf.getvalue())
