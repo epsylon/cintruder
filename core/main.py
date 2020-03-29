@@ -224,7 +224,10 @@ class cintruder():
         buf = self.optionCurl.request()
         if buf != "exit":
             m = hashlib.md5()
-            m.update(captcha.encode('utf-8')+str(datetime.datetime.now()))
+            try:
+                m.update(captcha.encode('utf-8')+str(datetime.datetime.now()))
+            except:
+                m.update(str(datetime.datetime.now()).encode('utf-8'))
             c = "%s.gif"%(m.hexdigest())
             h = "inputs/" + str(c)
             f = open(h, 'wb')
@@ -276,7 +279,10 @@ class cintruder():
                 print('-'*45)
             if buf != "exit":
                 m = hashlib.md5()
-                m.update(captcha.encode('utf-8')+str(datetime.datetime.now()))
+                try:
+                    m.update(captcha.encode('utf-8')+str(datetime.datetime.now()))
+                except:
+                    m.update(str(datetime.datetime.now()).encode('utf-8'))
                 h = "inputs/%s/%s.gif"%(self.domain, m.hexdigest())
                 f = open(h, 'wb')
                 f.write(buf.getvalue())

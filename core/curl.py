@@ -119,7 +119,7 @@ class CIntruderCurl(object):
             try:
                 errno, errstr = error
             except:
-                errno, errstr = "unknown!", "unknown!"
+                errno, errstr = "unknown!", "unknown!\n"
             print('\n[Error] Connection error... '+ str(errstr))
             return "exit"
  
